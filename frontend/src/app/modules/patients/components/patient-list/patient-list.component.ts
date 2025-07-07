@@ -15,6 +15,9 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { PatientFormDialogComponent } from '../patient-form-dialog/patient-form-dialog.component';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog.component';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Visit } from '../../../../core/models/visit.model';
+import { MatTooltipModule } from '@angular/material/tooltip'; // Add this import
 
 @Component({
   selector: 'app-patient-list',
@@ -30,14 +33,17 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
     MatButtonModule,
     MatIconModule,
     MatDialogModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule, 
   ],
   templateUrl: './patient-list.component.html',
   styleUrls: ['./patient-list.module.scss']
 })
 export class PatientListComponent implements AfterViewInit {
-  displayedColumns: string[] = ['firstName', 'lastName', 'email', 'phoneNumber', 'actions'];
-  dataSource = new MatTableDataSource<Patient>();
+  displayedColumns: string[] = ['firstName', 'lastName', 'email', 'phoneNumber', 'visitCount', 'actions'];
+  dataSource = new MatTableDataSource<Patient & { visitCount: number }>();
+  isLoading = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -47,18 +53,32 @@ export class PatientListComponent implements AfterViewInit {
     private router: Router,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
-  ) {
-    this.loadPatients();
-  }
+  ) {}
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this.loadPatients();
   }
 
   loadPatients(): void {
-    this.mockData.getPatients().subscribe((patients: Patient[]) => {
-      this.dataSource.data = patients;
+    this.isLoading = true;
+    this.mockData.getPatients().subscribe({
+      next: (patients: Patient[]) => {
+        // Get visits for each patient
+        this.mockData.getVisits().subscribe((visits: Visit[]) => {
+          const patientsWithVisitCount = patients.map(patient => ({
+            ...patient,
+            visitCount: visits.filter(v => v.patientId === patient.id).length
+          }));
+          this.dataSource.data = patientsWithVisitCount;
+          this.isLoading = false;
+        });
+      },
+      error: () => {
+        this.isLoading = false;
+        this.showSnackbar('Failed to load patients');
+      }
     });
   }
 
@@ -78,29 +98,35 @@ export class PatientListComponent implements AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        const newPatient = this.mockData.addPatient(result);
-        this.loadPatients();
-        this.showSnackbar('Patient added successfully');
+        this.mockData.addPatient(result).subscribe(() => {
+          this.loadPatients();
+          this.showSnackbar('Patient added successfully');
+        });
       }
     });
   }
 
   editPatient(id: string): void {
-    const patient = this.mockData.getPatientById(id);
-    if (patient) {
-      const dialogRef = this.dialog.open(PatientFormDialogComponent, {
-        width: '600px',
-        data: patient
-      });
+    this.mockData.getPatientById(id).subscribe(patient => {
+      if (patient) {
+        const dialogRef = this.dialog.open(PatientFormDialogComponent, {
+          width: '600px',
+          data: { 
+            ...patient,
+            dob: new Date(patient.dob)
+          }
+        });
 
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          const updatedPatient = this.mockData.updatePatient(id, result);
-          this.loadPatients();
-          this.showSnackbar('Patient updated successfully');
-        }
-      });
-    }
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            this.mockData.updatePatient(id, result).subscribe(() => {
+              this.loadPatients();
+              this.showSnackbar('Patient updated successfully');
+            });
+          }
+        });
+      }
+    });
   }
 
   viewVisits(id: string): void {
@@ -120,9 +146,10 @@ export class PatientListComponent implements AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.mockData.deletePatient(id);
-        this.loadPatients();
-        this.showSnackbar('Patient deleted successfully');
+        this.mockData.deletePatient(id).subscribe(() => {
+          this.loadPatients();
+          this.showSnackbar('Patient deleted successfully');
+        });
       }
     });
   }

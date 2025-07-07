@@ -1,5 +1,6 @@
+// src/app/core/services/mock-data.service.ts
 import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Patient } from '../models/patient.model';
 import { Visit } from '../models/visit.model';
 
@@ -15,7 +16,7 @@ export class MockDataService {
       phoneNumber: '123-456-7890',
       address: '123 Main St',
       dateCreated: new Date().toISOString(),
-      dateUpdated: new Date().toISOString()
+      dateUpdated: new Date().toISOString(),
     },
     {
       id: '2',
@@ -26,8 +27,19 @@ export class MockDataService {
       phoneNumber: '987-654-3210',
       address: '456 Oak Ave',
       dateCreated: new Date().toISOString(),
-      dateUpdated: new Date().toISOString()
-    }
+      dateUpdated: new Date().toISOString(),
+    },
+    {
+      id: '3',
+      firstName: 'Jim',
+      lastName: 'Beam',
+      dob: '1980-10-10',
+      email: 'jim@example.com',
+      phoneNumber: '555-555-5555',
+      address: '456 Oak Ave',
+      dateCreated: new Date().toISOString(),
+      dateUpdated: new Date().toISOString(),
+    },
   ];
 
   private visits: Visit[] = [
@@ -38,28 +50,38 @@ export class MockDataService {
       notes: 'Initial consultation',
       visitType: 'Clinic',
       dateCreated: new Date().toISOString(),
-      dateUpdated: new Date().toISOString()
+      dateUpdated: new Date().toISOString(),
     },
     {
       id: '2',
-      patientId: '1',
+      patientId: '2',
       visitDate: new Date(Date.now() - 86400000).toISOString(),
       notes: 'Follow-up appointment',
       visitType: 'Telehealth',
       dateCreated: new Date().toISOString(),
-      dateUpdated: new Date().toISOString()
-    }
+      dateUpdated: new Date().toISOString(),
+    },
+    {
+      id: '3',
+      patientId: '3',
+      visitDate: new Date(Date.now() - 86400000).toISOString(),
+      notes: 'Follow-up appointment',
+      visitType: 'Clinic',
+      dateCreated: new Date().toISOString(),
+      dateUpdated: new Date().toISOString(),
+    },
   ];
 
-  getPatients() {
+  getPatients(): Observable<Patient[]> {
     return of([...this.patients]);
   }
 
-  getPatientById(id: string): Patient | undefined {
-    return this.patients.find(p => p.id === id);
+  getPatientById(id: string): Observable<Patient | undefined> {
+    const patient = this.patients.find(p => p.id === id);
+    return of(patient);
   }
 
-  addPatient(patientData: Omit<Patient, 'id' | 'dateCreated' | 'dateUpdated'>) {
+  addPatient(patientData: Omit<Patient, 'id' | 'dateCreated' | 'dateUpdated'>): Observable<Patient> {
     const newPatient: Patient = {
       ...patientData,
       id: (this.patients.length + 1).toString(),
@@ -67,10 +89,10 @@ export class MockDataService {
       dateUpdated: new Date().toISOString()
     };
     this.patients.push(newPatient);
-    return newPatient;
+    return of(newPatient);
   }
 
-  updatePatient(id: string, patientData: Partial<Patient>) {
+  updatePatient(id: string, patientData: Partial<Patient>): Observable<Patient | undefined> {
     const index = this.patients.findIndex(p => p.id === id);
     if (index !== -1) {
       this.patients[index] = {
@@ -78,29 +100,34 @@ export class MockDataService {
         ...patientData,
         dateUpdated: new Date().toISOString()
       };
-      return this.patients[index];
+      return of(this.patients[index]);
     }
-    return undefined;
+    return of(undefined);
   }
 
-  deletePatient(id: string) {
+  deletePatient(id: string): Observable<boolean> {
     const index = this.patients.findIndex(p => p.id === id);
     if (index !== -1) {
       this.patients.splice(index, 1);
-      return true;
+      return of(true);
     }
-    return false;
+    return of(false);
   }
 
-  getVisits(patientId: string) {
+  getVisits(): Observable<Visit[]> {
+    return of([...this.visits]);
+  }
+
+  getVisitsByPatientId(patientId: string): Observable<Visit[]> {
     return of(this.visits.filter(v => v.patientId === patientId));
   }
 
-  getVisitById(id: string): Visit | undefined {
-    return this.visits.find(v => v.id === id);
+  getVisitById(id: string): Observable<Visit | undefined> {
+    const visit = this.visits.find(v => v.id === id);
+    return of(visit);
   }
 
-  addVisit(visitData: Omit<Visit, 'id' | 'dateCreated' | 'dateUpdated'>) {
+  addVisit(visitData: Omit<Visit, 'id' | 'dateCreated' | 'dateUpdated'>): Observable<Visit> {
     const newVisit: Visit = {
       ...visitData,
       id: (this.visits.length + 1).toString(),
@@ -111,16 +138,26 @@ export class MockDataService {
     return of(newVisit);
   }
 
-  updateVisit(id: string, visitData: Partial<Visit>) {
+  updateVisit(id: string, visitData: Partial<Visit>): Observable<Visit | undefined> {
     const index = this.visits.findIndex(v => v.id === id);
     if (index !== -1) {
-      this.visits[index] = {
+      const updatedVisit = {
         ...this.visits[index],
         ...visitData,
         dateUpdated: new Date().toISOString()
       };
-      return of(this.visits[index]);
+      this.visits[index] = updatedVisit;
+      return of(updatedVisit);
     }
     return of(undefined);
+  }
+
+  deleteVisit(id: string): Observable<boolean> {
+    const index = this.visits.findIndex(v => v.id === id);
+    if (index !== -1) {
+      this.visits.splice(index, 1);
+      return of(true);
+    }
+    return of(false);
   }
 }

@@ -70,17 +70,18 @@ export class PatientFormComponent implements OnInit {
   }
 
   loadPatientData(): void {
-    const patient = this.mockData.getPatientById(this.patientId!);
-    if (patient) {
-      this.form.patchValue({
-        firstName: patient.firstName,
-        lastName: patient.lastName,
-        dob: new Date(patient.dob),
-        email: patient.email,
-        phoneNumber: patient.phoneNumber,
-        address: patient.address
-      });
-    }
+    this.mockData.getPatientById(this.patientId!).subscribe(patient => {
+      if (patient) {
+        this.form.patchValue({
+          firstName: patient.firstName,
+          lastName: patient.lastName,
+          dob: new Date(patient.dob),
+          email: patient.email,
+          phoneNumber: patient.phoneNumber,
+          address: patient.address
+        });
+      }
+    });
   }
 
   onSubmit(): void {
@@ -96,13 +97,15 @@ export class PatientFormComponent implements OnInit {
       };
 
       if (this.isEditMode) {
-        const updatedPatient = this.mockData.updatePatient(this.patientId!, patientData);
-        if (updatedPatient) {
-          this.router.navigate(['/patients']);
-        }
+        this.mockData.updatePatient(this.patientId!, patientData).subscribe(updatedPatient => {
+          if (updatedPatient) {
+            this.router.navigate(['/patients']);
+          }
+        });
       } else {
-        this.mockData.addPatient(patientData);
-        this.router.navigate(['/patients']);
+        this.mockData.addPatient(patientData).subscribe(() => {
+          this.router.navigate(['/patients']);
+        });
       }
     }
   }

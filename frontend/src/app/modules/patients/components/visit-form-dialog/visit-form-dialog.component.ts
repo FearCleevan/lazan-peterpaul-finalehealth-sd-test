@@ -1,3 +1,4 @@
+// src/app/modules/patients/components/visit-form-dialog/visit-form-dialog.component.ts
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -5,11 +6,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { Visit, VisitType } from '../../../../core/models/visit.model';
 
 @Component({
-  selector: 'app-patient-form-dialog',
+  selector: 'app-visit-form-dialog',
   standalone: true,
   imports: [
     CommonModule,
@@ -19,37 +22,34 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
     MatInputModule,
     MatFormFieldModule,
     MatDatepickerModule,
+    MatSelectModule,
     MatSnackBarModule
   ],
-  templateUrl: './patient-form-dialog.component.html',
-  styleUrls: ['./patient-form-dialog.module.scss']
+  templateUrl: './visit-form-dialog.component.html',
+  styleUrls: ['./visit-form-dialog.module.scss'] // Changed to module.scss
 })
-export class PatientFormDialogComponent {
+export class VisitFormDialogComponent {
   form: FormGroup;
-  isEditMode = false;
-  title: string = 'Edit Patient';
+  visitTypes: VisitType[] = ['Clinic', 'Home', 'Telehealth'];
 
   constructor(
     private fb: FormBuilder,
-    public dialogRef: MatDialogRef<PatientFormDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<VisitFormDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { patientId: string, visit?: Visit },
     private snackBar: MatSnackBar
   ) {
-    // Initialize form AFTER fb is defined
     this.form = this.fb.group({
-      id: [''],
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
-      dob: [null, Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      phoneNumber: ['', Validators.required],
-      address: ['', Validators.required]
+      visitDate: [null, Validators.required],
+      visitType: ['', Validators.required],
+      notes: ['']
     });
 
-    if (this.data) {
-      this.isEditMode = true;
-      this.title = 'Edit Patient';
-      this.form.patchValue(this.data);
+    if (this.data.visit) {
+      this.form.patchValue({
+        visitDate: this.data.visit.visitDate,
+        visitType: this.data.visit.visitType,
+        notes: this.data.visit.notes
+      });
     }
   }
 
@@ -60,15 +60,13 @@ export class PatientFormDialogComponent {
   onSubmit(): void {
     if (this.form.valid) {
       const formValue = this.form.value;
-
-      if (this.isEditMode) {
-        formValue.id = this.data.id;
-      }
-
-      this.dialogRef.close(formValue);
-      this.showSnackbar(
-        this.isEditMode ? 'Patient updated successfully' : 'Patient added successfully'
-      );
+      const visitData: Omit<Visit, 'id' | 'dateCreated' | 'dateUpdated'> = {
+        patientId: this.data.patientId,
+        visitDate: new Date(formValue.visitDate).toISOString(),
+        visitType: formValue.visitType,
+        notes: formValue.notes
+      };
+      this.dialogRef.close(visitData);
     } else {
       this.showSnackbar('Please fill all required fields', 'error');
     }

@@ -1,0 +1,44 @@
+<!-- src/app/modules/patients/components/visit-view-dialog/visit-view-dialog.component.html -->
+<h1 mat-dialog-title>Visit Details</h1>
+<div mat-dialog-content>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ data.visit.visitType }} Visit</mat-card-title>
+      <mat-card-subtitle>For {{ data.patientName }}</mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-divider></mat-divider>
+    
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item>
+          <span matListItemTitle>Visit Date</span>
+          <span matListItemLine>{{ formatDate(data.visit.visitDate) }}</span>
+        </mat-list-item>
+        
+        <mat-list-item>
+          <span matListItemTitle>Visit Type</span>
+          <span matListItemLine>{{ data.visit.visitType }}</span>
+        </mat-list-item>
+        
+        <mat-list-item *ngIf="data.visit.notes">
+          <span matListItemTitle>Notes</span>
+          <span matListItemLine class="notes-content">{{ data.visit.notes }}</span>
+        </mat-list-item>
+        
+        <mat-list-item>
+          <span matListItemTitle>Created</span>
+          <span matListItemLine>{{ formatDate(data.visit.dateCreated) }}</span>
+        </mat-list-item>
+        
+        <mat-list-item>
+          <span matListItemTitle>Last Updated</span>
+          <span matListItemLine>{{ formatDate(data.visit.dateUpdated) }}</span>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onClose()">Close</button>
+</div>

@@ -1,0 +1,36 @@
+<!-- src/app/modules/patients/components/visit-form-dialog/visit-form-dialog.component.html -->
+<h1 mat-dialog-title>{{ data.visit ? 'Edit Visit' : 'Add New Visit' }}</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Visit Date</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="visitDate" required>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+      <mat-error *ngIf="form.get('visitDate')?.hasError('required')">
+        Visit date is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Visit Type</mat-label>
+      <mat-select formControlName="visitType" required>
+        <mat-option *ngFor="let type of visitTypes" [value]="type">
+          {{ type }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('visitType')?.hasError('required')">
+        Visit type is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Notes</mat-label>
+      <textarea matInput formControlName="notes" rows="3"></textarea>
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()">Save</button>
+</div>

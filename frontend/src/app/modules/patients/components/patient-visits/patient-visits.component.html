@@ -1,3 +1,4 @@
+<!-- src/app/modules/patients/components/patient-visits/patient-visits.component.html -->
 <div class="visits-container">
   <mat-card *ngIf="!isLoading">
     <mat-card-header>
@@ -8,20 +9,54 @@
     </mat-card-header>
 
     <mat-card-content>
-      <mat-list *ngIf="visits.length > 0">
-        <mat-list-item *ngFor="let visit of visits" class="visit-item">
-          <div matLine class="visit-header">
-            <span class="visit-type">{{ visit.visitType }}</span>
-            <span class="visit-date">{{ visit.visitDate | date:'mediumDate' }}</span>
-          </div>
-          <div matLine *ngIf="visit.notes" class="visit-notes">
-            {{ visit.notes }}
-          </div>
-          <button mat-icon-button (click)="editVisit(visit.id)">
-            <mat-icon>edit</mat-icon>
-          </button>
-        </mat-list-item>
-      </mat-list>
+      <table mat-table [dataSource]="dataSource" *ngIf="visits.length > 0" class="mat-elevation-z8" matSort>
+        <!-- Visit Date Column -->
+        <ng-container matColumnDef="visitDate">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Visit Date</th>
+          <td mat-cell *matCellDef="let visit">
+            {{ visit.visitDate | date:'mediumDate' }}
+          </td>
+        </ng-container>
+
+        <!-- Visit Type Column -->
+        <ng-container matColumnDef="visitType">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Visit Type</th>
+          <td mat-cell *matCellDef="let visit">
+            <span class="visit-type-badge" [ngClass]="getVisitTypeClass(visit.visitType)">
+              {{ visit.visitType }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Notes Column -->
+        <ng-container matColumnDef="notes">
+          <th mat-header-cell *matHeaderCellDef>Notes</th>
+          <td mat-cell *matCellDef="let visit">
+            <div class="notes-cell" matTooltip="{{ visit.notes }}" [matTooltipDisabled]="!visit.notes || visit.notes.length <= 50">
+              {{ visit.notes ? (visit.notes | truncate:50) : '-' }}
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let visit">
+            <button mat-icon-button color="primary" (click)="viewVisit(visit.id)" matTooltip="View">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-icon-button color="accent" (click)="editVisit(visit.id)" matTooltip="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteVisit(visit.id)" matTooltip="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
 
       <div *ngIf="visits.length === 0" class="no-visits">
         <mat-icon>info</mat-icon>

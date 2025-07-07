@@ -1,0 +1,39 @@
+:host {
+  display: block;
+}
+
+.mat-dialog-title {
+  padding-bottom: 20px;
+  color: #3f51b5;
+  font-weight: 500;
+  margin: 0 0 24px 0;  // Added margin-bottom for gap
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 15px;
+}
+
+.mat-dialog-content {
+  padding: 0;  // Changed from 16px 0 to 0
+  margin-top: 16px;  // Added margin-top for gap
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+
+  .mat-form-field-wrapper {
+    padding-bottom: 0;
+  }
+}
+
+.mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 0 0;
+  margin-top: 16px;
+  border-top: 1px solid #e0e0e0;
+
+  button {
+    margin-left: 8px;
+  }
+}
