@@ -11,8 +11,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Patient } from '../../../../core/models/patient.model';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { PatientFormDialogComponent } from '../patient-form-dialog/patient-form-dialog.component';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-patient-list',
@@ -26,10 +28,12 @@ import { PatientFormDialogComponent } from '../patient-form-dialog/patient-form-
     MatPaginatorModule,
     MatSortModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatDialogModule,
+    MatSnackBarModule
   ],
   templateUrl: './patient-list.component.html',
-  styleUrls: ['./patient-list.component.scss']
+  styleUrls: ['./patient-list.module.scss']
 })
 export class PatientListComponent implements AfterViewInit {
   displayedColumns: string[] = ['firstName', 'lastName', 'email', 'phoneNumber', 'actions'];
@@ -41,7 +45,8 @@ export class PatientListComponent implements AfterViewInit {
   constructor(
     private mockData: MockDataService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {
     this.loadPatients();
   }
@@ -73,19 +78,60 @@ export class PatientListComponent implements AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // Add the new patient to your mock data
         const newPatient = this.mockData.addPatient(result);
-        // Refresh the patient list
         this.loadPatients();
+        this.showSnackbar('Patient added successfully');
       }
     });
   }
 
   editPatient(id: string): void {
-    this.router.navigate(['/patients/edit', id]);
+    const patient = this.mockData.getPatientById(id);
+    if (patient) {
+      const dialogRef = this.dialog.open(PatientFormDialogComponent, {
+        width: '600px',
+        data: patient
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          const updatedPatient = this.mockData.updatePatient(id, result);
+          this.loadPatients();
+          this.showSnackbar('Patient updated successfully');
+        }
+      });
+    }
   }
 
   viewVisits(id: string): void {
     this.router.navigate(['/patients', id, 'visits']);
+  }
+
+  deletePatient(id: string): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Confirm Delete',
+        message: 'Are you sure you want to delete this patient?',
+        confirmText: 'Delete',
+        cancelText: 'Cancel'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.mockData.deletePatient(id);
+        this.loadPatients();
+        this.showSnackbar('Patient deleted successfully');
+      }
+    });
+  }
+
+  private showSnackbar(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
+    });
   }
 }

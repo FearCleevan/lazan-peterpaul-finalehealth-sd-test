@@ -1,0 +1,119 @@
+// patient-form-dialog.module.scss
+
+:host {
+  display: block;
+}
+
+h1.mat-dialog-title {
+  color: #2c3e50;
+  font-weight: 500;
+  font-size: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e0e0e0;
+  margin-bottom: 1.5rem;
+}
+
+.mat-dialog-content {
+  padding: 1rem 0;
+  max-height: 70vh;
+  overflow-y: auto;
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+}
+
+.row {
+  display: flex;
+  gap: 1rem;
+  
+  mat-form-field {
+    flex: 1;
+  }
+}
+
+mat-form-field {
+  width: 100%;
+  
+  &.mat-form-field-appearance-outline {
+    .mat-form-field-outline {
+      color: #cfd8dc;
+    }
+    
+    .mat-form-field-outline-thick {
+      color: #3f51b5;
+    }
+    
+    &.mat-focused {
+      .mat-form-field-outline-thick {
+        color: #3f51b5;
+      }
+      
+      .mat-form-field-label {
+        color: #3f51b5;
+      }
+    }
+  }
+  
+  .mat-input-element {
+    color: #37474f;
+    font-size: 0.95rem;
+  }
+  
+  .mat-form-field-label {
+    color: #78909c;
+  }
+  
+  .mat-error {
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+  }
+}
+
+.mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1.5rem 0 0;
+  
+  button {
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    
+    &[mat-button] {
+      color: #78909c;
+      
+      &:hover {
+        background-color: rgba(120, 144, 156, 0.1);
+      }
+    }
+    
+    &[mat-raised-button] {
+      padding: 0 1.5rem;
+      
+      &:disabled {
+        background-color: rgba(63, 81, 181, 0.5);
+        color: white;
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 600px) {
+  .row {
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  
+  .mat-dialog-content {
+    padding: 0.5rem 0;
+  }
+  
+  h1.mat-dialog-title {
+    font-size: 1.3rem;
+  }
+}

@@ -24,7 +24,7 @@ import { Visit } from '../../../../core/models/visit.model';
     ...materialModules,
   ],
   templateUrl: './patient-visits.component.html',
-  styleUrls: ['./patient-visits.component.scss'],
+  styleUrls: ['./patient-visits.module.scss'],
 })
 export class PatientVisitsComponent {
   patientId: string;

@@ -1,7 +1,8 @@
 <div class="container">
   <mat-toolbar>
     <span>Patients</span>
-    <button mat-raised-button color="primary" routerLink="/patients/add">
+    <button mat-raised-button color="primary" (click)="openAddPatientDialog()">
+      <mat-icon>add</mat-icon>
       Add Patient
     </button>
   </mat-toolbar>
@@ -12,39 +13,38 @@
   </mat-form-field>
 
   <table mat-table [dataSource]="dataSource">
-    <!-- First Name Column -->
+    <!-- Columns remain the same as before -->
     <ng-container matColumnDef="firstName">
       <th mat-header-cell *matHeaderCellDef>First Name</th>
       <td mat-cell *matCellDef="let patient">{{patient.firstName}}</td>
     </ng-container>
 
-    <!-- Last Name Column -->
     <ng-container matColumnDef="lastName">
       <th mat-header-cell *matHeaderCellDef>Last Name</th>
       <td mat-cell *matCellDef="let patient">{{patient.lastName}}</td>
     </ng-container>
 
-    <!-- Email Column -->
     <ng-container matColumnDef="email">
       <th mat-header-cell *matHeaderCellDef>Email</th>
       <td mat-cell *matCellDef="let patient">{{patient.email}}</td>
     </ng-container>
 
-    <!-- Phone Number Column -->
     <ng-container matColumnDef="phoneNumber">
       <th mat-header-cell *matHeaderCellDef>Phone</th>
       <td mat-cell *matCellDef="let patient">{{patient.phoneNumber}}</td>
     </ng-container>
 
-    <!-- Actions Column -->
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef>Actions</th>
       <td mat-cell *matCellDef="let patient">
-        <button mat-icon-button (click)="editPatient(patient.id)">
+        <button mat-icon-button (click)="editPatient(patient.id)" matTooltip="Edit">
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button (click)="viewVisits(patient.id)">
+        <button mat-icon-button (click)="viewVisits(patient.id)" matTooltip="View Visits">
           <mat-icon>visibility</mat-icon>
+        </button>
+        <button mat-icon-button (click)="deletePatient(patient.id)" matTooltip="Delete" color="warn">
+          <mat-icon>delete</mat-icon>
         </button>
       </td>
     </ng-container>

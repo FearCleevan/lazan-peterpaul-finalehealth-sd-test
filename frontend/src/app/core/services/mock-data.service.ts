@@ -1,4 +1,3 @@
-// src/app/core/services/mock-data.service.ts
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { Patient } from '../models/patient.model';
@@ -68,7 +67,7 @@ export class MockDataService {
       dateUpdated: new Date().toISOString()
     };
     this.patients.push(newPatient);
-    return of(newPatient);
+    return newPatient;
   }
 
   updatePatient(id: string, patientData: Partial<Patient>) {
@@ -79,9 +78,18 @@ export class MockDataService {
         ...patientData,
         dateUpdated: new Date().toISOString()
       };
-      return of(this.patients[index]);
+      return this.patients[index];
     }
-    return of(undefined);
+    return undefined;
+  }
+
+  deletePatient(id: string) {
+    const index = this.patients.findIndex(p => p.id === id);
+    if (index !== -1) {
+      this.patients.splice(index, 1);
+      return true;
+    }
+    return false;
   }
 
   getVisits(patientId: string) {

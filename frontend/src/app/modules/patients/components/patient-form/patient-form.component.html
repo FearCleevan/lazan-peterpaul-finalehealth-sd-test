@@ -7,7 +7,7 @@
       <div class="row">
         <mat-form-field appearance="outline">
           <mat-label>First Name</mat-label>
-          <input matInput formControlName="firstName" required>
+          <input title="firstName" matInput formControlName="firstName" required>
           <mat-error *ngIf="form.get('firstName')?.hasError('required')">
             First name is required
           </mat-error>
@@ -15,7 +15,7 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Last Name</mat-label>
-          <input matInput formControlName="lastName" required>
+          <input title="lastName" matInput formControlName="lastName" required>
           <mat-error *ngIf="form.get('lastName')?.hasError('required')">
             Last name is required
           </mat-error>
@@ -24,7 +24,7 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Date of Birth</mat-label>
-        <input matInput [matDatepicker]="picker" formControlName="dob" required>
+        <input title="date" matInput [matDatepicker]="picker" formControlName="dob" required>
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
         <mat-error *ngIf="form.get('dob')?.hasError('required')">
@@ -34,7 +34,7 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Email</mat-label>
-        <input matInput formControlName="email" required type="email">
+        <input title="email" matInput formControlName="email" required type="email">
         <mat-error *ngIf="form.get('email')?.hasError('required')">
           Email is required
         </mat-error>
@@ -45,7 +45,7 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Phone Number</mat-label>
-        <input matInput formControlName="phoneNumber" required>
+        <input title="phoneNumber" matInput formControlName="phoneNumber" required>
         <mat-error *ngIf="form.get('phoneNumber')?.hasError('required')">
           Phone number is required
         </mat-error>
@@ -53,7 +53,7 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Address</mat-label>
-        <textarea matInput formControlName="address" required></textarea>
+        <textarea title="address" matInput formControlName="address" required></textarea>
         <mat-error *ngIf="form.get('address')?.hasError('required')">
           Address is required
         </mat-error>

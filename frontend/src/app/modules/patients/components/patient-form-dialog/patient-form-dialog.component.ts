@@ -1,4 +1,3 @@
-// src/app/modules/patients/components/patient-form-dialog/patient-form-dialog.component.ts
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -7,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { CommonModule } from '@angular/common';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-patient-form-dialog',
@@ -18,20 +18,26 @@ import { CommonModule } from '@angular/common';
     MatButtonModule,
     MatInputModule,
     MatFormFieldModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    MatSnackBarModule
   ],
   templateUrl: './patient-form-dialog.component.html',
-  styleUrls: ['./patient-form-dialog.component.scss']
+  styleUrls: ['./patient-form-dialog.module.scss']
 })
 export class PatientFormDialogComponent {
   form: FormGroup;
+  isEditMode = false;
+  title: string = 'Add New Patient';
 
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<PatientFormDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private snackBar: MatSnackBar
   ) {
+    // Initialize form AFTER fb is defined
     this.form = this.fb.group({
+      id: [''],
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       dob: [null, Validators.required],
@@ -39,6 +45,12 @@ export class PatientFormDialogComponent {
       phoneNumber: ['', Validators.required],
       address: ['', Validators.required]
     });
+
+    if (this.data) {
+      this.isEditMode = true;
+      this.title = 'Edit Patient';
+      this.form.patchValue(this.data);
+    }
   }
 
   onCancel(): void {
@@ -47,7 +59,27 @@ export class PatientFormDialogComponent {
 
   onSubmit(): void {
     if (this.form.valid) {
-      this.dialogRef.close(this.form.value);
+      const formValue = this.form.value;
+
+      if (this.isEditMode) {
+        formValue.id = this.data.id;
+      }
+
+      this.dialogRef.close(formValue);
+      this.showSnackbar(
+        this.isEditMode ? 'Patient updated successfully' : 'Patient added successfully'
+      );
+    } else {
+      this.showSnackbar('Please fill all required fields', 'error');
     }
+  }
+
+  private showSnackbar(message: string, panelClass: string = 'success'): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      panelClass: [`snackbar-${panelClass}`]
+    });
   }
 }

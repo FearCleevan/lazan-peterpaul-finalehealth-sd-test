@@ -33,7 +33,7 @@ interface PatientForm {
     ...materialModules
   ],
   templateUrl: './patient-form.component.html',
-  styleUrls: ['./patient-form.component.scss']
+  styleUrls: ['./patient-form.module.scss']
 })
 export class PatientFormComponent implements OnInit {
   isEditMode = false;

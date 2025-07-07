@@ -1,0 +1,166 @@
+// patient-list.module.scss
+
+.container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  mat-toolbar {
+    padding: 0.5rem 0;
+    background: transparent;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    span {
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: #2c3e50;
+    }
+
+    button[mat-raised-button] {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 0 1.25rem;
+      height: 42px;
+    }
+  }
+
+  mat-form-field {
+    width: 100%;
+
+    &.mat-form-field-appearance-outline {
+      .mat-form-field-outline {
+        color: #e0e6ed;
+      }
+
+      .mat-form-field-outline-thick {
+        color: #3f51b5;
+      }
+
+      &.mat-focused {
+        .mat-form-field-outline-thick {
+          color: #3f51b5;
+        }
+
+        .mat-form-field-label {
+          color: #3f51b5;
+        }
+      }
+    }
+
+    .mat-input-element {
+      color: #37474f;
+      font-size: 0.95rem;
+    }
+
+    .mat-form-field-label {
+      color: #78909c;
+    }
+  }
+
+  table {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+
+    th.mat-header-cell {
+      background-color: #f8fafc;
+      color: #2c3e50;
+      font-weight: 500;
+      font-size: 0.9rem;
+      padding: 1rem;
+    }
+
+    td.mat-cell {
+      padding: 1rem;
+      color: #546e7a;
+      border-bottom-color: #f0f2f5;
+
+      &:first-child {
+        font-weight: 500;
+        color: #37474f;
+      }
+    }
+
+    tr.mat-row {
+      &:hover {
+        background-color: #f8fafc;
+      }
+    }
+
+    button[mat-icon-button] {
+      color: #78909c;
+      margin-right: 0.5rem;
+
+      &:hover {
+        color: #3f51b5;
+        background-color: rgba(63, 81, 181, 0.1);
+      }
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
+  mat-paginator {
+    margin-top: 0.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    background-color: #f8fafc;
+  }
+
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    padding: 0 1rem;
+    gap: 1rem;
+
+    mat-toolbar {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1rem 0;
+
+      button[mat-raised-button] {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    table {
+      th.mat-header-cell,
+      td.mat-cell {
+        padding: 0.75rem;
+        font-size: 0.85rem;
+      }
+
+      .mat-column-actions {
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
+  }
+
+  @media (max-width: 600px) {
+    .mat-column-email {
+      display: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .mat-column-phoneNumber {
+      display: none;
+    }
+  }
+}
